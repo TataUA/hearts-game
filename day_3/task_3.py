@@ -1,4 +1,5 @@
 from typing import Optional
+from datetime import datetime
 
 
 class Author:
@@ -68,8 +69,8 @@ class Genre:
 
 
 class Book:
-    def __init__(self, title: str, language: str, authors: list[Author], genres: list[Genre],
-                 year: int, isbn: str, description: Optional[str]) -> None:
+    def __init__(self, title: str, language: str, year: int, *authors: Author, genres: list[Genre] = None,
+                 isbn: str = None, description: Optional[str] = None) -> None:
         """
         Створює об'єкт книги
         :param title: назва книги
@@ -93,15 +94,15 @@ class Book:
         Дозволяє отримати рядок, що представляє об'єкт у вигляді Python коду, який можна використовувати
         для його відтворення.
         """
-        return (f"Book('{self.title}', '{self.language}', [{self.authors}], [{self.genres}],"
-                f" {self.year}, '{self.isbn}', '{self.description}')")
+        return (f"Book('{self.title}', '{self.language}', {self.year},  [{self.authors}], [{self.genres}],"
+                f"'{self.isbn}', '{self.description}')")
 
     def __str__(self):
         """
         Повертає рядок, що представляє об'єкт у зручному для читання форматі.
         """
-        return (f"book: '{self.title}', description: '{self.description}', language: '{self.language}', "
-                f"authors: {self.authors}, genres: {self.genres}, year: {self.year}, ISBN: '{self.isbn}'")
+        return (f"book: '{self.title}', language: '{self.language}', year: {self.year}, authors: {self.authors},"
+                f"genres: {self.genres},  ISBN: '{self.isbn}', description: '{self.description}'")
 
     def __eq__(self, other: "Book") -> bool:
         """
@@ -111,6 +112,14 @@ class Book:
             raise TypeError(f"for type Book and type {type(other)} operation is not implemented")
         return set(self.authors) == set(other.authors) and self.title == other.title
 
+    def calculate_age(self) -> int:
+        """
+        Повертає вік книги в роках (відносно поточного).
+        """
+        current_year = datetime.now().year
+        book_age = current_year - self.year
+        return book_age
+
 
 if __name__ == "__main__":
     author1 = Author('Mike', 'Mison', 1970)
@@ -118,7 +127,7 @@ if __name__ == "__main__":
     genre1 = Genre('horror', 'very scary movie')
     genre2 = Genre('triller', 'amazing effects')
 
-    book = Book('Scary Movie', 'eng', [author1, author2], [genre1, genre2],
-                2020, '978-3-16-148410-0', 'about a group of teenagers who get lost in the forest')
+    book = Book('Scary Movie', 'eng', 2020, author1, author2)
 
     print(book)
+    print(f"Вік книги: {book.calculate_age()} років")
